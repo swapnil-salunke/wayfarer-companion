@@ -19,6 +19,7 @@ kotlin {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
+            implementation(compose.components.resources)
             implementation(libs.kotlinx.coroutines.core)
             implementation(libs.kotlinx.datetime)
             implementation(libs.kotlinx.serialization.json)
@@ -46,6 +47,11 @@ android {
     compileSdk = 36
     defaultConfig { minSdk = 26 }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
+}
+
+compose.resources {
+    packageOfResClass = "com.wayfarer.resources"
+    generateResClass = always
 }
 
 room { schemaDirectory("$projectDir/schemas") }
