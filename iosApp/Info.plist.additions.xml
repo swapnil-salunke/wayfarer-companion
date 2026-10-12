@@ -1,0 +1,5 @@
+<!-- Add these keys to your Xcode target's Info.plist. GUIDE: Module 9.3 and Module 8.3 -->
+<key>LSApplicationQueriesSchemes</key>
+<array><string>instagram-stories</string></array>
+<key>NSPhotoLibraryAddUsageDescription</key>
+<string>Wayfarer saves your travel cards to Photos.</string>

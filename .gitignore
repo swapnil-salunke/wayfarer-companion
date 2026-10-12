@@ -1,0 +1,15 @@
+# Build / tooling
+build/
+.gradle/
+.kotlin/
+*.iml
+.idea/
+local.properties
+.DS_Store
+captures/
+# iOS
+iosApp/build/
+xcuserdata/
+DerivedData/
+# Local artifacts
+recordings/
