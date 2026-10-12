@@ -32,19 +32,17 @@ a screenshot shown at 920px wide maps to points by dividing by 2.29.
 - `text` input goes to the start of a focused field; not relevant for photos.
 - Tapping empty space clears keyboard focus (editor has tap-outside handling).
 - **Teal issue (two different causes, check which one you see):**
-  1. *Blank teal squares/cards where photos should be.* Teal `#2E5B63` is `WfColors.PhotoPlaceholder`,
-     the background drawn behind every `AsyncImage` (timeline strip, edit thumbnails, share card). It shows
-     whenever Coil can't load `file://<path>`. Seen on the entry saved at 22:37 in an earlier session; after
-     re-picking photos and saving, the same entry rendered correctly. Picked photos are copied to the app's
-     `Documents` dir (`IosPlatform.kt` ~line 53), so the earlier failure was NOT a temp-dir cleanup; the
-     cause is not confirmed (suspect stale absolute paths saved by an earlier build/container). Diagnose by
-     comparing the entry's stored paths with `xcrun simctl get_app_container booted com.wayfarer.app.ios data`.
-     Workaround: Edit the entry, re-add photos, remove the dead ones with the circled-cross, Save.
-  2. *Teal flash when dragging past the first/last photo on the share card.* The pager's iOS bounce
-     revealed the card's teal background. Fixed by `overscrollEffect = null` on the `HorizontalPager` in
-     `SharePreview.kt`. The simulator tool can't screenshot mid-drag, so Claude could not see it; the user confirmed the fix works (no drag past the last image).
-  No new recording of the issue was available when this note was written (only `recordings/add-images.mp4`);
-  if the user records it again, extract frames (AVAssetImageGenerator script, no ffmpeg on this Mac) and update this note.
+  1. *Blank teal squares/cards where photos should be.* Teal `#2E5B63` is `WfColors.PhotoPlaceholder`, the
+     background behind every `AsyncImage`; it shows whenever Coil can't load `file://<path>`.
+     **Root cause (confirmed):** the DB used to store absolute photo paths including the iOS app container UUID
+     (`.../Containers/Data/Application/<UUID>/Documents/photos/x.jpg`). The UUID changes after an
+     install/restore, so old paths point at a folder that no longer exists although the files moved with the app.
+     **Fixed** by storing only the file name and resolving it with `PhotoLocator` on load (legacy absolute rows resolve too).
+     If it ever reappears, compare `sqlite3 "file:<container>/Documents/wayfarer.db?mode=ro" "select path from media"`
+     with `xcrun simctl get_app_container booted com.wayfarer.app.ios data`.
+  2. *Teal flash when dragging past the first/last photo on the share card.* The pager's iOS bounce revealed the
+     card's teal background. Fixed with `overscrollEffect = null` on the `HorizontalPager` in `SharePreview.kt`;
+     the user confirmed it.
 - Share card page (tap **Share** ~68, 438): swipe the card horizontally to page through photos; dots below.
 - To record a run: `xcrun simctl io booted recordVideo --codec h264 --force recordings/<name>.mp4 &`,
   stop with `pkill -INT -f "simctl io booted recordVideo"`.

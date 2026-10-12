@@ -22,7 +22,7 @@ val dataModule = module {
     single<Clock> { Clock { KClock.System.now().toEpochMilliseconds() } }
     single<IdGenerator> { IdGenerator { randomId() } }
     single { get<WayfarerDatabase>().entryDao() }
-    single<EntryRepository> { RoomEntryRepository(get()) }
+    single<EntryRepository> { RoomEntryRepository(get(), get()) }
 }
 
 val domainModule = module {
