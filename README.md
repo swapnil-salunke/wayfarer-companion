@@ -26,6 +26,17 @@ Dependency rule to notice: `domain` imports nothing from `data`, `presentation` 
 - **Share card:** swipe horizontally through all the entry's photos (page dots below); the title / place / WAYFARER overlay stays fixed. Share opens the system sheet, Instagram posts to Stories.
 - Edit uses `UpdateEntryUseCase`; `Route.Editor(entryId)` is null for a new entry.
 
+## Branching and releases
+```
+feature/<name> ──PR──▶ development ──release PR──▶ main
+```
+- **`main`** is released code only. **`development`** is the working branch and the GitHub default, so new PRs target it automatically. Never push straight to either.
+- **Features and fixes:** branch from the latest `development` using a prefix: `feature/entry-search`, `fix/android-share`, `docs/...`, `chore/...`. Commit small and often.
+- **Feature PR:** open a pull request into `development` and **squash merge** it (one clean commit per feature).
+- **Release PR:** when `development` has the feature set you want, open a PR from `development` into `main` and merge it with a **merge commit** (not squash) so `main` keeps each feature's history and the two branches don't drift. Then tag it: `git tag v0.2.0 && git push --tags`.
+- **Hotfix:** branch from `main`, PR into `main`, then merge `main` back into `development`.
+- GitHub's free plan has no branch protection on private repos, so these rules are a convention; keep to them.
+
 ## Set up on another machine
 The repo is **private**, so you must be signed in to GitHub as `swapnil-salunke`.
 
