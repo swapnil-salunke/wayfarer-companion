@@ -26,6 +26,37 @@ Dependency rule to notice: `domain` imports nothing from `data`, `presentation` 
 - **Share card:** swipe horizontally through all the entry's photos (page dots below); the title / place / WAYFARER overlay stays fixed. Share opens the system sheet, Instagram posts to Stories.
 - Edit uses `UpdateEntryUseCase`; `Route.Editor(entryId)` is null for a new entry.
 
+## Set up on another machine
+The repo is **private**, so you must be signed in to GitHub as `swapnil-salunke`.
+
+```bash
+# one-time: sign in (or have an SSH key added to your GitHub account)
+gh auth login
+
+gh repo clone swapnil-salunke/wayfarer-companion
+# or: git clone git@github.com:swapnil-salunke/wayfarer-companion.git
+cd wayfarer-companion
+```
+
+**What to install**
+| For | You need |
+|-----|----------|
+| Everything | JDK 21. The Gradle wrapper (9.6.0) downloads itself; `gradle/gradle-daemon-jvm.properties` asks for a JetBrains JDK 21 and Gradle fetches it automatically if none is installed. |
+| Android | Android Studio (current stable) with the Android SDK; the project compiles against API 36 (`compileSdk = 36`, `minSdk = 26`). Create an emulator in Device Manager (a Pixel on API 34 worked). |
+| iOS | A Mac with Xcode (built with Xcode 27) and an iOS simulator runtime. Verified on Apple Silicon only (the Xcode build phase links `:shared:linkDebugFrameworkIosSimulatorArm64`). |
+
+**First run**
+1. **Open the folder in Android Studio** and let it sync. It creates `local.properties` with your `sdk.dir` (this file is gitignored and machine-specific). Without Android Studio, create it yourself: `echo "sdk.dir=$HOME/Library/Android/sdk" > local.properties` (adjust the path), or export `ANDROID_HOME`.
+2. **Android:** start an emulator, then `./gradlew :androidApp:installDebug` (or press Run on `androidApp`). First sync downloads a lot of dependencies, so give it a few minutes.
+3. **iOS:** `./run-ios.sh "iPhone 17 Pro"`. The script boots the simulator, runs Xcode's build (which calls Gradle to build the shared framework) and launches the app. If your Xcode has a different iOS runtime, edit the `OS=26.2` in the `-destination` line of `run-ios.sh` or pick a simulator you actually have (`xcrun simctl list devices available`).
+4. **Real iPhone (optional):** open `iosApp/iosApp.xcodeproj`, set your own Team under Signing (the project uses a `${TEAM_ID}` placeholder), and change the bundle id `com.wayfarer.app.ios` if it is taken.
+
+**Gotchas**
+- The first iOS build is slow (Kotlin/Native); later ones are fast.
+- Photos: a fresh simulator or emulator gallery may be empty. iOS Simulator has sample photos; for Android `adb push` JPEGs to `/sdcard/Pictures/`.
+- Data lives only on the device (Room database in the app's storage), so a new machine starts with an empty timeline.
+- Nothing secret is committed. Instagram Stories needs your own Facebook App ID in `MainActivity.kt` and `IosPlatformModule.kt`.
+
 ## Run it
 **iOS (simulator, Mac only):** `./run-ios.sh` builds the `iosApp` Xcode project (it links the shared framework) and launches it on an iPhone 17 Pro simulator. Pass another simulator name as the first argument; the script pins `OS=26.2` in the destination, so edit it if you use a different runtime.
 **Android:** `./gradlew :androidApp:assembleDebug`, install `androidApp/build/outputs/apk/debug/androidApp-debug.apk` on an emulator or device, or run `androidApp` from Android Studio.
