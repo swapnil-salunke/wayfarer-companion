@@ -10,6 +10,8 @@ let S: CGFloat = 1024
 func rgb(_ hex: UInt32, _ a: CGFloat = 1) -> CGColor {
     CGColor(red: CGFloat((hex >> 16) & 255) / 255, green: CGFloat((hex >> 8) & 255) / 255, blue: CGFloat(hex & 255) / 255, alpha: a)
 }
+// Sun sits inside Android's 66dp adaptive-icon safe circle (radius ~313 of 1024): hypot(dx, dy) + r must be < 313.
+let SUN: (x: CGFloat, y: CGFloat, r: CGFloat) = (650, 380, 80)
 let ink = rgb(0x12262B), ridgeBack = rgb(0x2E5B63), ridgeFront = rgb(0x1F6F78), amber = rgb(0xE8A33D), ground = rgb(0xF2F5F3)
 
 let ctx = CGContext(data: nil, width: 1024, height: 1024, bitsPerComponent: 8, bytesPerRow: 0,
@@ -28,7 +30,7 @@ func circle(_ cx: CGFloat, _ cy: CGFloat, _ r: CGFloat, _ color: CGColor) {
 
 // Background + halo behind the sun
 ctx.setFillColor(ink); ctx.fill(CGRect(x: 0, y: 0, width: S, height: S))
-circle(690, 330, 96, amber)
+circle(SUN.x, SUN.y, SUN.r, amber)
 
 // Ridges (bleed off the edges so any launcher mask stays filled)
 poly([(0, 760), (300, 440), (500, 660), (690, 500), (1024, 800), (1024, 1024), (0, 1024)], ridgeBack)
@@ -72,7 +74,7 @@ if CommandLine.arguments.count > 2 {
     var bg = head + path([(0,0),(1024,0),(1024,1024),(0,1024)], "#12262B")
     bg += path([(0, 760), (300, 440), (500, 660), (690, 500), (1024, 800), (1024, 1024), (0, 1024)], "#2E5B63")
     bg += path([(0, 880), (250, 650), (430, 820), (620, 700), (1024, 980), (1024, 1024), (0, 1024)], "#1F6F78") + "</vector>\n"
-    var fg = head + dot(690, 330, 96, "#E8A33D")
+    var fg = head + dot(SUN.x, SUN.y, SUN.r, "#E8A33D")
     trail.forEach { fg += dot($0.0, $0.1, $0.2, "#F2F5F3") }
     fg += "</vector>\n"
     try! bg.write(toFile: dir + "/ic_launcher_background.xml", atomically: true, encoding: .utf8)
