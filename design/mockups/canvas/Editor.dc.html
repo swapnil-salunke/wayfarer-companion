@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>New entry</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=DM+Sans:wght@400;500;600&display=swap">
+<style>
+body{margin:0}
+button,input,textarea{font-family:inherit}
+</style>
+</helmet>
+<div style="width: 390px; height: 844px; box-sizing: border-box; background: #F2F5F3; color: #12262B; font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; overflow: hidden">
+<div style="padding: 48px 8px 8px; display: flex; align-items: center; gap: 4px">
+<button style="min-height: 44px; padding: 0 12px; border: 0; background: transparent; color: #1F6F78; font-size: 16px; font-weight: 600; display: flex; align-items: center; gap: 4px">
+<svg aria-hidden="true" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#1F6F78" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>Back</button>
+<h1 style="margin: 0; font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 22px">New entry</h1>
+</div>
+<div style="flex: 1; padding: 12px 20px 0; display: flex; flex-direction: column; gap: 16px">
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="t" style="font-size: 13px; font-weight: 600; color: #4A5E63">Title</label>
+<input id="t" value="Khardung La at dusk" style="height: 52px; box-sizing: border-box; border: 1.5px solid #C5D0CB; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font-size: 16px; color: #12262B">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="p" style="font-size: 13px; font-weight: 600; color: #4A5E63">Place</label>
+<input id="p" value="Khardung La, Ladakh" style="height: 52px; box-sizing: border-box; border: 2px solid #1F6F78; border-radius: 12px; background: #FFFFFF; padding: 0 14px; font-size: 16px; color: #12262B">
+</div>
+<div style="display: flex; flex-direction: column; gap: 6px">
+<label for="b" style="font-size: 13px; font-weight: 600; color: #4A5E63">What happened?</label>
+<textarea id="b" rows="5" style="box-sizing: border-box; border: 1.5px solid #C5D0CB; border-radius: 12px; background: #FFFFFF; padding: 14px; font-size: 16px; line-height: 1.45; color: #12262B; resize: none; height: 150px">Wind so cold the tea froze in the flask. Stood at the pass until the last light left the ridge.</textarea>
+</div>
+<div style="display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; gap: 8px">
+<div style="width: 72px; height: 72px; border-radius: 10px; background: #2E5B63; display: flex; align-items: flex-end; padding: 6px; box-sizing: border-box; color: #F2F5F3; font-size: 11px">Photo 1</div>
+<div style="width: 72px; height: 72px; border-radius: 10px; background: #8A6F3A; display: flex; align-items: flex-end; padding: 6px; box-sizing: border-box; color: #FFF8E8; font-size: 11px">Photo 2</div>
+</div>
+<button style="min-height: 48px; border: 1.5px solid #1F6F78; border-radius: 12px; background: transparent; color: #1F6F78; font-size: 15px; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 8px">
+<svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#1F6F78" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="3"/><circle cx="9" cy="10" r="1.5"/><path d="M21 16l-5-5-8 8"/></svg>2 photo(s) · add more</button>
+</div>
+</div>
+<div style="padding: 16px 20px 40px">
+<button style="width: 100%; min-height: 54px; border: 0; border-radius: 14px; background: #12262B; color: #F2F5F3; font-size: 17px; font-weight: 600">Save</button>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+renderVals() {
+return {};
+}
+}
+</script>
+</body>
+</html>

@@ -37,6 +37,9 @@ feature/<name> ──PR──▶ development ──release PR──▶ main
 - **Hotfix:** branch from `main`, PR into `main`, then merge `main` back into `development`.
 - GitHub's free plan has no branch protection on private repos, so these rules are a convention; keep to them.
 
+## Design
+`design/mockups/` holds the original screen mockups (PNG previews, standalone HTML and the canvas sources) and `design/icon/` the app icon generator. See `design/mockups/README.md`.
+
 ## Set up on another machine
 The repo is **private**, so you must be signed in to GitHub as `swapnil-salunke`.
 
