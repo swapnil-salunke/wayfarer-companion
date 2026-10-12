@@ -1,7 +1,7 @@
 # Wayfarer – companion project
 
 Real Kotlin Multiplatform code for the **Compose Multiplatform + Clean Architecture guide** (the "Two-day sprint" slice):
-one shared module, Android + iOS, offline only, entries + photos + timeline + share card (system sheet / Instagram Stories).
+one shared module, Android + iOS, offline only, entries (create, edit, delete) + photos + timeline + share card (system sheet / Instagram Stories).
 Server sync, trip list, location and desktop are intentionally left out (the DB already has `id`, `updatedAt`, `deleted` so sync can be added later).
 
 ## Read it in this order (file -> guide section)
@@ -11,7 +11,7 @@ Server sync, trip list, location and desktop are intentionally left out (the DB 
 | 2 | `domain/Core.kt`, `Ports.kt`, `UseCases.kt` | Module 3 (domain, ports, use cases) |
 | 3 | `commonTest/*` | Module 12 (fakes, use-case tests) |
 | 4 | `data/Db.kt`, `data/RoomEntryRepository.kt` | Module 4 (Room, repository) |
-| 5 | `presentation/Timeline.kt`, `Editor.kt` | Modules 5-6 (state, events, effects) |
+| 5 | `presentation/Theme.kt`, `Timeline.kt`, `Editor.kt` | Modules 5-6 (state, events, effects); `Theme.kt` holds the design tokens |
 | 6 | `presentation/Navigation.kt`, `WayfarerApp.kt` | Modules 2.4, 7 |
 | 7 | `platform/Platform.kt` + `androidMain` / `iosMain` platform files | Module 8 (pickers, expect/actual) |
 | 8 | `presentation/SharePreview.kt` + share services | Module 9 (share card, Android/iOS/Instagram) |
@@ -20,17 +20,22 @@ Server sync, trip list, location and desktop are intentionally left out (the DB 
 
 Dependency rule to notice: `domain` imports nothing from `data`, `presentation` or `platform`.
 
-## Run it
-**Android:** open this folder in Android Studio, sync, run `androidApp`.
-**iOS:** needs a Mac. `./gradlew :shared:linkDebugFrameworkIosSimulatorArm64`, then in Xcode create an iOS App project named `iosApp`,
-replace its Swift files with `iosApp/iosApp/*.swift`, link the `Shared` framework (or use the official KMP wizard's Xcode project),
-and merge `iosApp/Info.plist.additions.xml` into Info.plist.
-**Instagram Stories:** replace `YOUR_FACEBOOK_APP_ID` (MainActivity.kt, IosPlatformModule.kt) with your Facebook App ID.
+## What the app does
+- **Timeline:** entry cards with date, title, place, text preview and a photo strip; Share / Edit / Delete per card; empty state.
+- **New / edit entry:** title, place, text, photos from the system picker (up to 5 per pick). Each photo is a thumbnail with a circled-cross to remove it before saving. Tap outside a field or press Done to dismiss the keyboard; Save stays pinned above the keyboard.
+- **Share card:** swipe horizontally through all the entry's photos (page dots below); the title / place / WAYFARER overlay stays fixed. Share opens the system sheet, Instagram posts to Stories.
+- Edit uses `UpdateEntryUseCase`; `Route.Editor(entryId)` is null for a new entry.
 
-## Honest status – read this
-- **Not compiled.** The build sandbox could not reach Google/Maven repositories and has no Android SDK or Xcode, so none of this has been built or run.
-  Expect small fixes (imports, API signature drift), most likely in `IosPlatform.kt` (PHPicker / pasteboard interop) and Room/KSP setup.
-- **Versions:** verified when the guide was written: Compose Multiplatform 1.12.1, Koin 4.2.1, Kotlin 2.2.20 recommended.
-  Everything marked `check` in `libs.versions.toml` (AGP, KSP, Room, Coil, lifecycle, datetime, activity) is a best guess; bump if sync fails (KSP must start with your Kotlin version).
+## Run it
+**iOS (simulator, Mac only):** `./run-ios.sh` builds the `iosApp` Xcode project (it links the shared framework) and launches it on an iPhone 17 Pro simulator. Pass another simulator name as the first argument; the script pins `OS=26.2` in the destination, so edit it if you use a different runtime.
+**Android:** `./gradlew :androidApp:assembleDebug`, install `androidApp/build/outputs/apk/debug/androidApp-debug.apk` on an emulator or device, or run `androidApp` from Android Studio.
+**Instagram Stories:** replace `YOUR_FACEBOOK_APP_ID` (`MainActivity.kt`, `IosPlatformModule.kt`) with your Facebook App ID.
+**Emulator photos:** a fresh emulator has an empty gallery; `adb push` some JPEGs to `/sdcard/Pictures/` and run a media scan to see them in the picker.
+
+## Honest status
+- **Built and run:** the app compiles and runs on the iOS Simulator (iPhone 17 Pro, iOS 27.1, Xcode 27) and the Android emulator (Pixel 3a, API 34). Walked through by hand on both: create, edit, remove a photo, save, timeline, share card pager, keyboard dismissal, system share sheet.
+- **Not verified:** the Instagram Stories path (needs a real Facebook App ID and Instagram installed), the image attached to the Android share sheet via FileProvider, any physical device, and the `commonTest` unit tests (not run in this pass). `UpdateEntryUseCase` has no tests yet.
+- **Known quirk:** photos picked in an earlier build can render as blank teal squares (teal is the image placeholder colour). It cleared once the photos were re-added in the edit screen; root cause not confirmed.
+- **Versions:** the versions in `gradle/libs.versions.toml` resolve and build today. Entries marked `check` there were guesses that happened to work; bump them deliberately rather than assuming they are canonical.
 - **If Gradle won't sync:** create a fresh project with the official Kotlin Multiplatform wizard (Android + iOS, Compose UI shared), then copy `shared/src/**` over its `composeApp` sources and add the dependencies from `shared/build.gradle.kts`.
-- **Simplifications vs the guide:** plain back stack instead of Navigation 3 (swap per Module 7); share card captured at device density, not fixed 1080x1920 (Module 9.4); no location, no "save to Photos".
+- **Simplifications vs the guide:** plain back stack instead of Navigation 3 (swap per Module 7); share card captured at device density, not fixed 1080x1920 (Module 9.4); no location, no "save to Photos"; system fonts (the design mockups use Bricolage Grotesque + DM Sans, not bundled yet).
