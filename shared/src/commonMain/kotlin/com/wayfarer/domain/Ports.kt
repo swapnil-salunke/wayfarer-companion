@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface EntryRepository {
     fun observeEntries(tripId: TripId): Flow<List<JournalEntry>>
-    suspend fun get(id: EntryId): JournalEntry?
+    suspend fun get(id: JournalEntryId): JournalEntry?
     suspend fun upsert(entry: JournalEntry): Outcome<Unit, DomainError>
 }
 

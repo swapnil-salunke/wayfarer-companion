@@ -17,7 +17,7 @@ class CreateEntryUseCase(
             return Outcome.Err(DomainError.Validation("Write something or add a photo first."))
         val now = clock.nowMillis()
         val entry = JournalEntry(
-            id = EntryId(ids.newId()), tripId = tripId,
+            id = JournalEntryId(ids.newId()), tripId = tripId,
             title = title.trim(), body = body.trim(),
             place = placeName?.takeIf { it.isNotBlank() }?.let { Place(it.trim()) },
             photoPaths = photoPaths, createdAtMillis = now, updatedAtMillis = now,
@@ -31,7 +31,7 @@ class CreateEntryUseCase(
 
 class UpdateEntryUseCase(private val repository: EntryRepository, private val clock: Clock) {
     suspend operator fun invoke(
-        id: EntryId, title: String, body: String, placeName: String?, photoPaths: List<String>,
+        id: JournalEntryId, title: String, body: String, placeName: String?, photoPaths: List<String>,
     ): Outcome<JournalEntry, DomainError> {
         if (title.isBlank() && body.isBlank() && photoPaths.isEmpty())
             return Outcome.Err(DomainError.Validation("Write something or add a photo first."))
@@ -58,14 +58,14 @@ class ObserveTimelineUseCase(private val repository: EntryRepository) {
 
 class DeleteEntryUseCase(private val repository: EntryRepository, private val clock: Clock) {
     /** Soft delete = tombstone, so a future sync can tell the server. Guide: Module 11. */
-    suspend operator fun invoke(id: EntryId): Outcome<Unit, DomainError> {
+    suspend operator fun invoke(id: JournalEntryId): Outcome<Unit, DomainError> {
         val e = repository.get(id) ?: return Outcome.Err(DomainError.NotFound)
         return repository.upsert(e.copy(deleted = true, updatedAtMillis = clock.nowMillis()))
     }
 }
 
 class ShareEntryUseCase(private val repository: EntryRepository, private val share: ShareService) {
-    suspend operator fun invoke(id: EntryId, imagePath: String?, target: ShareTarget): Outcome<ShareOutcome, DomainError> {
+    suspend operator fun invoke(id: JournalEntryId, imagePath: String?, target: ShareTarget): Outcome<ShareOutcome, DomainError> {
         val e = repository.get(id) ?: return Outcome.Err(DomainError.NotFound)
         val text = buildString {
             if (e.title.isNotBlank()) appendLine(e.title)

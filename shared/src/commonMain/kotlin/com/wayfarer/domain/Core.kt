@@ -17,15 +17,15 @@ sealed interface DomainError {
     data class Platform(val message: String) : DomainError
 }
 
-/** Value classes stop you passing a TripId where an EntryId is expected. */
+/** Value classes stop you passing a TripId where a JournalEntryId is expected. */
 @JvmInline value class TripId(val value: String)
-@JvmInline value class EntryId(val value: String)
+@JvmInline value class JournalEntryId(val value: String)
 
 data class Place(val name: String, val latitude: Double? = null, val longitude: Double? = null)
 
 /** Offline-first columns (id from phone, updatedAt, deleted) = easy sync later. Guide: Sprint block 3 cut line. */
 data class JournalEntry(
-    val id: EntryId,
+    val id: JournalEntryId,
     val tripId: TripId,
     val title: String,
     val body: String,

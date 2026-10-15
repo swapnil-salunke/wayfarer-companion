@@ -60,7 +60,7 @@ class EditorViewModel(
     private val updateEntry: UpdateEntryUseCase,
     private val repository: EntryRepository,
 ) : ViewModel() {
-    private var editingId: EntryId? = null
+    private var editingId: JournalEntryId? = null
 
     private val _state = MutableStateFlow(EditorState())
     val state: StateFlow<EditorState> = _state.asStateFlow()
@@ -68,7 +68,7 @@ class EditorViewModel(
     val effects = _effects.receiveAsFlow()
 
     /** Called whenever the editor route opens: blank for a new entry, prefilled when editing. */
-    fun start(id: EntryId?) {
+    fun start(id: JournalEntryId?) {
         editingId = id
         _state.value = EditorState()
         if (id != null) viewModelScope.launch {

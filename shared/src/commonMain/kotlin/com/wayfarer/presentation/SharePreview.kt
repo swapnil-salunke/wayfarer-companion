@@ -34,7 +34,7 @@ import org.koin.compose.koinInject
 // captured at the device's density (works everywhere, size varies). Upgrading is an exercise in Module 9.4.
 
 @Composable
-fun SharePreviewScreen(entryId: EntryId, onBack: () -> Unit) {
+fun SharePreviewScreen(entryId: JournalEntryId, onBack: () -> Unit) {
     val repo = koinInject<EntryRepository>()
     val shareEntry = koinInject<ShareEntryUseCase>()
     val files = koinInject<FileStore>()
@@ -77,7 +77,7 @@ fun SharePreviewScreen(entryId: EntryId, onBack: () -> Unit) {
     }
 }
 
-private suspend fun doShare(png: ByteArray, files: FileStore, uc: ShareEntryUseCase, id: EntryId, target: ShareTarget): String {
+private suspend fun doShare(png: ByteArray, files: FileStore, uc: ShareEntryUseCase, id: JournalEntryId, target: ShareTarget): String {
     val path = files.writeCache("share-${id.value}.png", png)
     return when (val r = uc(id, path, target)) {
         is Outcome.Ok -> when (r.value) {
