@@ -36,11 +36,11 @@ class TimelineViewModel(
         .map { TimelineState(loading = false, entries = it) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), TimelineState())
 
-    fun onDelete(id: EntryId) { viewModelScope.launch { deleteEntry(id) } }
+    fun onDelete(id: JournalEntryId) { viewModelScope.launch { deleteEntry(id) } }
 }
 
 @Composable
-fun TimelineScreen(state: TimelineState, onAdd: () -> Unit, onOpenShare: (EntryId) -> Unit, onEdit: (EntryId) -> Unit, onDelete: (EntryId) -> Unit) {
+fun TimelineScreen(state: TimelineState, onAdd: () -> Unit, onOpenShare: (JournalEntryId) -> Unit, onEdit: (JournalEntryId) -> Unit, onDelete: (JournalEntryId) -> Unit) {
     Scaffold(
         containerColor = WfColors.Ground,
         topBar = {

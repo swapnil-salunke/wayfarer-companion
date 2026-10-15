@@ -10,7 +10,7 @@ class RoomEntryRepository(private val dao: EntryDao, private val photos: PhotoLo
     override fun observeEntries(tripId: TripId): Flow<List<JournalEntry>> =
         dao.observe(tripId.value).map { rows -> rows.map { it.toDomain(photos) } }
 
-    override suspend fun get(id: EntryId): JournalEntry? = dao.get(id.value)?.toDomain(photos)
+    override suspend fun get(id: JournalEntryId): JournalEntry? = dao.get(id.value)?.toDomain(photos)
 
     override suspend fun upsert(entry: JournalEntry): Outcome<Unit, DomainError> = try {
         dao.save(entry.toEntity(), entry.photoPaths.mapIndexed { i, p -> MediaEntity(entry.id.value, photos.toStored(p), i) })
@@ -21,7 +21,7 @@ class RoomEntryRepository(private val dao: EntryDao, private val photos: PhotoLo
 }
 
 internal fun EntryWithMedia.toDomain(photos: PhotoLocator) = JournalEntry(
-    id = EntryId(entry.id), tripId = TripId(entry.tripId), title = entry.title, body = entry.body,
+    id = JournalEntryId(entry.id), tripId = TripId(entry.tripId), title = entry.title, body = entry.body,
     place = entry.placeName?.let { Place(it, entry.latitude, entry.longitude) },
     photoPaths = media.sortedBy { it.position }.map { photos.resolve(it.path) },
     createdAtMillis = entry.createdAt, updatedAtMillis = entry.updatedAt, deleted = entry.deleted,
